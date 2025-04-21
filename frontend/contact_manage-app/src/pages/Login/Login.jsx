@@ -4,6 +4,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { validateEmail } from '../../utils/helper'; // Assuming this function exists
 import axiosInstance from '../../utils/axiosInstance';
+import { ToastContainer, toast } from 'react-toastify'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -42,9 +43,12 @@ const Login = () => {
       if (response.data && response.data.accessToken) {
         // Store token in local storage
         localStorage.setItem('token', response.data.accessToken);
+        toast.success("Login successful!");
 
         // Navigate to dashboard
-        navigate('/dashboard');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 500);
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
@@ -129,7 +133,10 @@ const Login = () => {
           </Link>
         </Typography>
       </Paper>
+      <ToastContainer position="bottom-left" autoClose={3000} />
+
     </Box>
+    
   );
 };
 

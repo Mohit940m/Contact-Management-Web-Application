@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from "@mui/material";
 import axiosInstance from "../../utils/axiosInstance";
+import { toast } from "react-toastify";
 
-const AddEditContact = ({ modalType, contactData, onClose, refreshContacts }) => {
+const AddEditContact = ({ modalType, contactData, onClose, refreshContacts, onSuccessToast }) => {
   const [contact, setContact] = useState(
     contactData || {
       firstName: "",
@@ -24,14 +25,17 @@ const AddEditContact = ({ modalType, contactData, onClose, refreshContacts }) =>
       if (modalType === "edit") {
         // Update existing contact
         await axiosInstance.put(`/edit-contacts/${contact._id}`, contact);
+        onSuccessToast("edit");
       } else {
         // Add new contact
         await axiosInstance.post("/contacts", contact);
+        onSuccessToast("add");
       }
       refreshContacts(); // Refresh the contact list
       onClose(); // Close the modal
     } catch (error) {
       console.error("Error saving contact:", error);
+      toast.error("Error saving contact.");
     }
   };
 

@@ -1,1 +1,16 @@
 
+.navbar-title {
+    margin: 0;
+    color: #1976d2;
+    font-size: 1.8rem;
+    padding: 8px 16px;
+    border-radius: 10px; /* smooth chamfer */
+    transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .navbar-title:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    transform: scale(1.02); /* subtle lift effect */
+  }
+  

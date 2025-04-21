@@ -4,7 +4,10 @@ import ContactCard from "../../components/Cards/ContactCard";
 import AddEditContact from "./AddEditContact";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const [openAddEditModal, setOpenAddEditModal] = useState({
@@ -14,15 +17,19 @@ const Home = () => {
   });
   const [allContacts, setAllContacts] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
-
   const navigate = useNavigate();
 
-  // Fetch user info
+  
+
   const getUserInfo = async () => {
     try {
       const response = await axiosInstance.get("/get-user");
+      
       if (response.data && response.data.user) {
         setUserInfo(response.data.user);
+        // toast.success("Login successful!");
+        // localStorage.removeItem("loginSuccess");
+        
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -32,7 +39,7 @@ const Home = () => {
     }
   };
 
-  // Fetch all contacts
+
   const getAllContacts = async () => {
     try {
       const response = await axiosInstance.get("/get-all-contacts");
@@ -40,28 +47,32 @@ const Home = () => {
         setAllContacts(response.data.contacts);
       }
     } catch (error) {
-      console.error("Error fetching contacts:", error);
+      toast.error("Failed to fetch contacts!");
     }
   };
 
-  // Handle delete contact
   const handleDeleteContact = async (contactId) => {
     try {
       await axiosInstance.delete(`/delete-contact/${contactId}`);
-      getAllContacts(); // Refresh contacts after deletion
+      getAllContacts();
+      toast.success("Contact deleted successfully!");
     } catch (error) {
-      console.error("Error deleting contact:", error);
+      toast.error("Error deleting contact.");
     }
   };
 
-  // Open modal for add/edit
   const handleOpenModal = (type, data = null) => {
     setOpenAddEditModal({ isShown: true, type, data });
   };
 
-  // Close modal
   const handleCloseModal = () => {
     setOpenAddEditModal({ isShown: false, type: "add", data: null });
+  };
+
+  // This will be passed to modal and used when contact is added/edited
+  const handleToastOnSave = (type) => {
+    if (type === "add") toast.success("Contact added successfully!");
+    if (type === "edit") toast.info("Contact updated successfully!");
   };
 
   useEffect(() => {
@@ -72,15 +83,8 @@ const Home = () => {
   return (
     <>
       <NavBar userInfo={userInfo} />
+
       <Box sx={{ padding: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleOpenModal("add")}
-          sx={{ marginBottom: 2 }}
-        >
-          Add New Contact
-        </Button>
         <Grid container spacing={2}>
           {allContacts.map((contact) => (
             <Grid item xs={12} sm={6} md={4} key={contact.id}>
@@ -93,14 +97,32 @@ const Home = () => {
           ))}
         </Grid>
       </Box>
+
+      {/* Add Contact FAB Button */}
+      <Fab
+        color="primary"
+        aria-label="add"
+        onClick={() => handleOpenModal("add")}
+        sx={{
+          position: "fixed",
+          bottom: 16,
+          right: 16,
+        }}
+      >
+        <AddIcon />
+      </Fab>
+
       {openAddEditModal.isShown && (
         <AddEditContact
           modalType={openAddEditModal.type}
           contactData={openAddEditModal.data}
           onClose={handleCloseModal}
           refreshContacts={getAllContacts}
+          onSuccessToast={handleToastOnSave}
         />
       )}
+
+      <ToastContainer position="bottom-left" autoClose={3000} />
     </>
   );
 };
