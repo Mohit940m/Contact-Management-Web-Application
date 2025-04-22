@@ -4,10 +4,11 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 
 const connectionString = process.env.MONGODB_URI;
-mongoose.connect(connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+mongoose.connect(connectionString)
+// mongoose.connect(connectionString, {   // useNewUrlParser and useUnifiedTopology are no longer needed as of MongoDB Node.js Driver v4.0+ — and will be removed in the future.
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
   .then(() => console.log('MongoDB connected successfully!'))
   .catch((err) => console.error('MongoDB connection error:', err));
 

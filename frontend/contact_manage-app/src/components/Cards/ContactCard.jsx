@@ -1,9 +1,24 @@
-import React from 'react';
-import { Card, CardContent, Typography, IconButton, Box } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { MdDelete } from "react-icons/md";
+import {
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from '@mui/material';
+import { Edit } from '@mui/icons-material';
 
 const ContactCard = ({ contact, onEdit, onDelete }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+
   const {
+    _id,
     firstName = 'Mohit',
     lastName = 'Saha Chowdhury',
     email = 'sahachowdhurymohit@gmail.com',
@@ -11,6 +26,21 @@ const ContactCard = ({ contact, onEdit, onDelete }) => {
     company = '',
     jobTitle = '',
   } = contact;
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleConfirmDelete = () => {
+    if (onDelete) {
+      onDelete(_id);
+    }
+    handleCloseDialog();
+  };
 
   return (
     <Card
@@ -39,6 +69,7 @@ const ContactCard = ({ contact, onEdit, onDelete }) => {
           <strong>Job Title:</strong> {jobTitle}
         </Typography>
       </CardContent>
+
       <Box
         sx={{
           display: 'flex',
@@ -50,10 +81,28 @@ const ContactCard = ({ contact, onEdit, onDelete }) => {
         <IconButton color="primary" onClick={() => onEdit(contact)}>
           <Edit />
         </IconButton>
-        <IconButton color="error" onClick={() => onDelete(contact.id)}>
-          <Delete />
-        </IconButton>
+        <Button variant="outlined" color="error" onClick={handleOpenDialog}>
+          <MdDelete size={24} />
+        </Button>
       </Box>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this contact?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };

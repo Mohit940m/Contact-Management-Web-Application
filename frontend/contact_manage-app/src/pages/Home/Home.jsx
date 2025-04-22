@@ -51,7 +51,8 @@ const Home = () => {
     }
   };
 
-  const handleDeleteContact = async (contactId) => {
+  const handleDeleteContact = async (data) => {
+    const contactId = data._id;
     try {
       await axiosInstance.delete(`/delete-contact/${contactId}`);
       getAllContacts();
@@ -91,7 +92,7 @@ const Home = () => {
               <ContactCard
                 contact={contact}
                 onEdit={() => handleOpenModal("edit", contact)}
-                onDelete={() => handleDeleteContact(contact.id)}
+                onDelete={() => handleDeleteContact(contact)}
               />
             </Grid>
           ))}

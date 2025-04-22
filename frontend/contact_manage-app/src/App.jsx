@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 const routes = (
   <Router>
     <Routes>
+      <Route path="/" element={<Login/>} /> 
       <Route path='/dashboard' exact element={<Home/>}/>
       <Route path='/Login' exact element={<Login/>}/>
       <Route path='/SignUp' exact element={<SignUp/>}/>
