@@ -5,12 +5,12 @@ const mongoose = require("mongoose");
 
 const connectionString = process.env.MONGODB_URI;
 mongoose.connect(connectionString)
-// mongoose.connect(connectionString, {   // useNewUrlParser and useUnifiedTopology are no longer needed as of MongoDB Node.js Driver v4.0+ — and will be removed in the future.
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-  .then(() => console.log('MongoDB connected successfully!'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+    // mongoose.connect(connectionString, {   // useNewUrlParser and useUnifiedTopology are no longer needed as of MongoDB Node.js Driver v4.0+ — and will be removed in the future.
+    //     useNewUrlParser: true,
+    //     useUnifiedTopology: true,
+    //   })
+    .then(() => console.log('MongoDB connected successfully!'))
+    .catch((err) => console.error('MongoDB connection error:', err));
 
 const User = require("./models/user.model");
 const Contact = require("./models/contact.model");
@@ -63,28 +63,28 @@ app.post("/create-account", async (req, res) => {
 
 // Login
 
-app.post("/login", async (req, res) =>{
-    const{email, password} = req.body;
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
 
-    if(!email || !password){
-        return res.status(400).json({error: true, message: "All fields are required"});
+    if (!email || !password) {
+        return res.status(400).json({ error: true, message: "All fields are required" });
     }
 
     const userInfo = await User.findOne({ email });
-    
-    if(!userInfo){
-        return res.status(400).json({error: true, message: "Invalid email or password"});
+
+    if (!userInfo) {
+        return res.status(400).json({ error: true, message: "Invalid email or password" });
     }
 
-    if(userInfo.password !== password){
-        return res.status(400).json({error: true, message: "Invalid email or password"});
+    if (userInfo.password !== password) {
+        return res.status(400).json({ error: true, message: "Invalid email or password" });
     }
 
     const accessToken = jwt.sign({ userId: userInfo._id }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "1h",
     })
 
-    res.status(200).json({error: false, accessToken, message: "Login Successful"});
+    res.status(200).json({ error: false, accessToken, message: "Login Successful" });
 });
 
 // Get User Details
@@ -122,7 +122,7 @@ app.post("/contacts", autenticateToken, async (req, res) => {
     const m = req.user;
     console.log(m);
     const userId = req.user.userId; // Extract userId
-    
+
     console.log("Extracted userId:", userId); // Debug here
 
     const { firstName, lastName, email, phone, company, jobTitle } = req.body;
@@ -257,6 +257,38 @@ app.delete("/delete-contact/:id", autenticateToken, async (req, res) => {
         });
     }
 });
+
+// Search Contact
+app.get("/search-contacts", autenticateToken, async (req, res) => {
+    const userId = req.user._id || req.user.id;
+    const { query } = req.query;
+
+    if (!query) {
+        return res.status(400).json({ error: true, message: "Search query is required" });
+    }
+
+    try {
+        const searchRegex = new RegExp(query, "i");
+
+        const contacts = await Contact.find({
+            userID: userId,
+            $or: [
+                { firstName: { $regex: searchRegex } },
+                { lastName: { $regex: searchRegex } },
+                { email: { $regex: searchRegex } },
+                { phone: { $regex: searchRegex } },
+                { company: { $regex: searchRegex } },
+                { jobTitle: { $regex: searchRegex } },
+            ],
+        });
+        return res.status(200).json({ error: false, contacts });
+    } catch (error) {
+        console.error("Search error:", error);
+        return res.status(500).json({ error: true, message: "Internal server error" });
+    }
+});
+
+
 
 
 app.listen(8000);

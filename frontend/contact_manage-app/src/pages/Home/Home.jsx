@@ -8,6 +8,7 @@ import { Box, Button, Grid, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import EmptyCard from "../../components/EmptyCard/EmptyCard";
 
 const Home = () => {
   const [openAddEditModal, setOpenAddEditModal] = useState({
@@ -61,6 +62,8 @@ const Home = () => {
       toast.error("Error deleting contact.");
     }
   };
+// Search for Contacts
+
 
   const handleOpenModal = (type, data = null) => {
     setOpenAddEditModal({ isShown: true, type, data });
@@ -85,7 +88,8 @@ const Home = () => {
     <>
       <NavBar userInfo={userInfo} />
 
-      <Box sx={{ padding: 2 }}>
+      {allContacts.length > 0 ?(
+        <Box sx={{ padding: 2 }}>
         <Grid container spacing={2}>
           {allContacts.map((contact) => (
             <Grid item xs={12} sm={6} md={4} key={contact.id}>
@@ -98,6 +102,9 @@ const Home = () => {
           ))}
         </Grid>
       </Box>
+      ) : (
+        <EmptyCard/>
+        )}
 
       {/* Add Contact FAB Button */}
       <Fab

@@ -1,56 +1,45 @@
-import React from "react";
-import { getInitals } from "../../utils/helper";
-import { 
-  Avatar, 
-  Box, 
-  Typography, 
-  Button 
-} from "@mui/material";
+import React from 'react';
+import { Avatar, Box, Typography, Button } from '@mui/material';
 
 const ProfileInfo = ({ userInfo, onLogout }) => {
-  const { name = "User", email = "" } = userInfo || {}; // Destructure user info with default values
-
   return (
-    <Box 
-      sx={{ 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "space-between", 
-        padding: "8px 16px" 
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        padding: '8px 16px',
+        backgroundColor: '#f5f5f5',
+        borderRadius: '12px',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+        transition: 'box-shadow 0.3s ease-in-out',
+        '&:hover': {
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        },
       }}
     >
-      {/* Left section: Avatar and user name */}
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Avatar 
-          sx={{ 
-            bgcolor: "primary.main", 
-            marginRight: 2 
-          }} 
-          title={name} 
-        >
-          {getInitals(name)}
-        </Avatar>
-        <Box>
-          <Typography variant="h6" component="div">
-            {name}
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {email}
-          </Typography>
-        </Box>
+      <Avatar>
+        {userInfo?.fullName?.charAt(0).toUpperCase()}
+      </Avatar>
+      <Box>
+        <Typography variant="subtitle1" fontWeight="600">
+          {userInfo?.fullName || 'Guest User'}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {userInfo?.email || 'guest@example.com'}
+        </Typography>
       </Box>
-
-      {/* Right section: Logout button */}
-      <Button 
-        variant="outlined" 
-        color="error" 
-        onClick={onLogout} 
-        sx={{ 
-          textTransform: "capitalize", 
-          fontSize: 14, 
-          padding: "4px 16px" 
+      <Button
+        onClick={onLogout}
+        variant="outlined"
+        color="error"
+        size="small"
+        sx={{
+          marginLeft: 'auto',
+          textTransform: 'none',
+          fontWeight: 500,
+          borderRadius: '8px',
         }}
-        aria-label="Logout"
       >
         Logout
       </Button>
