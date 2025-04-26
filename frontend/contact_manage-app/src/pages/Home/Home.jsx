@@ -18,6 +18,7 @@ const Home = () => {
   });
   const [allContacts, setAllContacts] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
+  const [isSearch, setIsSearch] = useState(false);
   const navigate = useNavigate();
 
   
@@ -63,7 +64,21 @@ const Home = () => {
     }
   };
 // Search for Contacts
+  const onSearchContacts = async (query) => {
+    try {
+      const response = await axiosInstance.get("/search-contacts", {
+        params: { query },
+    });
 
+    if (response.data && response.data.contacts) {
+      setIsSearch(true);
+      setAllContacts(response.data.contacts);
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Error searching for contacts.");
+    }
+  };
 
   const handleOpenModal = (type, data = null) => {
     setOpenAddEditModal({ isShown: true, type, data });
@@ -86,13 +101,13 @@ const Home = () => {
 
   return (
     <>
-      <NavBar userInfo={userInfo} />
+      <NavBar userInfo={userInfo} onSearchContacts={onSearchContacts} />
 
       {allContacts.length > 0 ?(
         <Box sx={{ padding: 2 }}>
         <Grid container spacing={2}>
           {allContacts.map((contact) => (
-            <Grid item xs={12} sm={6} md={4} key={contact.id}>
+            <Grid item xs={12} sm={6} md={4} key={contact._id}>
               <ContactCard
                 contact={contact}
                 onEdit={() => handleOpenModal("edit", contact)}

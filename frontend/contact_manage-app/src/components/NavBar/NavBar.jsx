@@ -8,7 +8,7 @@ import '../../App.css';
 
 
 
-const NavBar = ({ userInfo }) => {
+const NavBar = ({ userInfo, onSearchContacts }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
@@ -20,24 +20,27 @@ const NavBar = ({ userInfo }) => {
     }, 1000);
   };
 
-  const handleSearch = () => {
+  const handleSearchContacts = () => {
+    if(searchQuery){
+      onSearchContacts(searchQuery);
+    }
     console.log('Search query:', searchQuery);
   };
 
-  const onClearSearch = () => {
+  const handleClearSearch = () => {
     setSearchQuery("");
   };
 
   return (
     <nav style={styles.navbar}>
-      <h2 className="navbar-title">Contact Manager</h2>
+      <h2 className="navbar-title" onClick={() => navigate("/dashboard")}>Contact Manager</h2>
       
       <div style={styles.searchContainer}>
         <SearchBar
           value={searchQuery}
           onChange={({ target }) => setSearchQuery(target.value)}
-          handleSearch={handleSearch}
-          onClearSearch={onClearSearch}
+          onSearchContacts={handleSearchContacts}
+          onClearSearch={handleClearSearch}
         />
       </div>
 

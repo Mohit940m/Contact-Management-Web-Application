@@ -260,10 +260,11 @@ app.delete("/delete-contact/:id", autenticateToken, async (req, res) => {
 
 // Search Contact
 app.get("/search-contacts", autenticateToken, async (req, res) => {
-    const userId = req.user._id || req.user.id;
+    const userId = req.user.userId; // Extract userId from the token
     const { query } = req.query;
 
     if (!query) {
+        toast.error("Search query is required");
         return res.status(400).json({ error: true, message: "Search query is required" });
     }
 
@@ -271,7 +272,7 @@ app.get("/search-contacts", autenticateToken, async (req, res) => {
         const searchRegex = new RegExp(query, "i");
 
         const contacts = await Contact.find({
-            userID: userId,
+            userId,
             $or: [
                 { firstName: { $regex: searchRegex } },
                 { lastName: { $regex: searchRegex } },
