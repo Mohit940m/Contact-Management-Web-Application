@@ -100,7 +100,7 @@ const ContactCard = ({ contact, onEdit, onDelete }) => {
         >
           <Edit />
         </IconButton>
-        <Dialog>
+        <>
           <IconButton
             onClick={handleOpenDialog}
             sx={{
@@ -112,6 +112,9 @@ const ContactCard = ({ contact, onEdit, onDelete }) => {
             }}
           >
             <MdDelete color="#d32f2f" size={22} />
+          </IconButton>
+
+          <Dialog open={openDialog} onClose={handleCloseDialog}>
             <DialogTitle>Confirm Delete</DialogTitle>
             <DialogContent>
               <Typography>
@@ -126,8 +129,9 @@ const ContactCard = ({ contact, onEdit, onDelete }) => {
                 Delete
               </Button>
             </DialogActions>
-          </IconButton>
-        </Dialog>
+          </Dialog>
+        </>
+
       </Box>
     </Card>
 
