@@ -25,9 +25,15 @@ const { autenticateToken } = require("./utilities")
 
 app.use(express.json());
 
+const allowedOrigins = [
+    'http://localhost:3000',  // For local dev
+    'https://contact-management-web-application-hk2g.onrender.com'  // For production frontend
+  ];
+
 app.use(
     cors({
-        origin: "*"
+        origin: allowedOrigins,
+        credentials: true
     })
 );
 
